@@ -1,7 +1,7 @@
 import os
 
-ANCHO_V = 900
-ALTO_V = 480
+ANCHO_V = 1200
+ALTO_V = 780
 RUTA1 = os.path.join('Imagenes', 'disparoa.jpg')
 RUTA2 = os.path.join('Imagenes', 'disparob.jpg')
 MARCIANO1A = os.path.join('Imagenes', 'MarcianoA.jpg')

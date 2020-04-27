@@ -5,33 +5,19 @@ from constantes import *
 from models.nave import NaveEspacial
 from models.proyectil import Proyectil
 from models.enemigo import Enemigo
+from models.nivel import Nivel
 import os
 
 def detenerTodo():
     for enemigo in LISTA_ENEMIGOS:
         for disparo in enemigo.lista_disparos:
             enemigo.lista_disparos.remove(disparo)
+    
+    
+    LISTA_ENEMIGOS.clear()
 
-        enemigo.conquista = True
 
-def cargarEnemigos(): 
-    posx = 100
-    for x in range(1, 5):
-        enemigo = Enemigo(posx, 200, 100, MARCIANO1A, MARCIANO1B)
-        LISTA_ENEMIGOS.append(enemigo)
-        posx += 200
-    posx = 100
-    for x in range(1, 5):
-        enemigo = Enemigo(posx, 100, 100, MARCIANO2A, MARCIANO2B)
-        LISTA_ENEMIGOS.append(enemigo)
-        posx += 200
-    posx = 100
-    for x in range(1, 5):
-        enemigo = Enemigo(posx, 0, 100, MARCIANO3A, MARCIANO3B)
-        LISTA_ENEMIGOS.append(enemigo)
-        posx += 200
-
-def Aliens():
+def Aliens(lvl):
     #Iniciamos el modulo pygame para trabajar con el
     pygame.init()
     #Creamos la ventana del juego
@@ -41,16 +27,25 @@ def Aliens():
 
     #Cargamos la imagen de fondo
     imagen_fondo = pygame.image.load(os.path.join('Imagenes', 'Fondo.jpg'))
+    imagen_fondo = pygame.transform.scale(imagen_fondo, (ANCHO_V, ALTO_V))
     #Cargamos la cancion de fondo
     pygame.mixer.music.load(os.path.join('Musica', 'Intro.mp3'))
     pygame.mixer.music.play(3)
 
     fuente = pygame.font.SysFont("Arial", 100)
-    texto = fuente.render("GAME OVER",  0, (255, 0, 0))
+    texto_derrota = fuente.render("GAME OVER",  0, (255, 0, 0))
+    texto_victoria = fuente.render("HAS GANADO!!",  0, (255, 0, 0))
 
+        
+    for enemigo in LISTA_ENEMIGOS:
+        print(enemigo.velocidad)
+
+    nivel = Nivel(lvl)
     jugador = NaveEspacial()
-    cargarEnemigos()
+    nivel.cargarEnemigos()
     en_juego = True
+    derrota = False
+    victoria = False
     reloj = pygame.time.Clock()
 
     #Bucle infinito para que este abierto
@@ -99,7 +94,8 @@ def Aliens():
 
                 if enemigo.rect.colliderect(jugador.rect):
                     jugador.destruccion()
-                    en_juego = False
+                    derrota = True
+                    enemigo.conquista = True
                     detenerTodo()
                 
                 if len(enemigo.lista_disparos) > 0:
@@ -108,10 +104,12 @@ def Aliens():
                         x.trayectoria()
                         if x.rect.colliderect(jugador.rect):
                             jugador.destruccion()
-                            en_juego = False
+                            derrota = True
+                            enemigo.conquista = True
                             detenerTodo()
+                    
 
-                        if x.rect.top > 900:
+                        if x.rect.top > ANCHO_V+100:
                             enemigo.lista_disparos.remove(x)
                         else:
                             for disparo in jugador.lista_disparos:
@@ -119,12 +117,27 @@ def Aliens():
                                     jugador.lista_disparos.remove(disparo)
                                     enemigo.lista_disparos.remove(x)
 
-        if en_juego == False:
+        else:
+             victoria = True
+
+        if victoria == True and enemigo.conquista == False:
+            ventana.blit(texto_victoria, (250, 200))
+            if event.type == pygame.KEYDOWN:
+                if event.key == K_RETURN:
+                    lvl += 1
+                    Aliens(lvl)
+
+        if derrota == True:
             pygame.mixer.music.fadeout(3000)
-            ventana.blit(texto, (250, 200))
+            ventana.blit(texto_derrota, (250, 200))
+            if event.type == pygame.KEYDOWN:
+                if event.key == K_RETURN:
+                    lvl = 1
+                    Aliens(lvl)
 
         #Actualizamos el estado de la pantalla
         pygame.display.update()
 
 if __name__ == '__main__':
-    Aliens()
+    lvl = 1
+    Aliens(lvl)

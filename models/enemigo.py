@@ -14,7 +14,7 @@ class Enemigo(pygame.sprite.Sprite):
         self.pos_imagen = 0
         self.imagen_enemigo = self.lista_imagenes[self.pos_imagen]
         self.rect = self.imagen_enemigo.get_rect()
-        self.velocidad = 20
+        self.velocidad = 5
         self.lista_disparos = []
         self.rect.top = posy
         self.rect.left = posx
