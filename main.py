@@ -33,8 +33,11 @@ def Aliens(lvl):
     pygame.mixer.music.play(3)
 
     fuente = pygame.font.SysFont("Arial", 100)
+    fuente2 = pygame.font.SysFont("Arial", 30)
     texto_derrota = fuente.render("GAME OVER",  0, (255, 0, 0))
+    texto_return_d = fuente2.render("PRESIONA ENTER PARA VOLVER A EMPEZAR",  0, (255, 0, 0))
     texto_victoria = fuente.render("HAS GANADO!!",  0, (255, 0, 0))
+    texto_return_v = fuente2.render("PRESIONA ENTER PARA CONTINUAR",  0, (255, 0, 0))
 
         
     for enemigo in LISTA_ENEMIGOS:
@@ -121,15 +124,21 @@ def Aliens(lvl):
              victoria = True
 
         if victoria == True and enemigo.conquista == False:
-            ventana.blit(texto_victoria, (250, 200))
-            if event.type == pygame.KEYDOWN:
-                if event.key == K_RETURN:
-                    lvl += 1
-                    Aliens(lvl)
+            if lvl > 10:
+                 pygame.mixer.music.fadeout(3000)
+                 ventana.blit(texto_victoria, (250, 200))
+            else:
+                ventana.blit(texto_victoria, (250, 200))
+                ventana.blit(texto_return_v, (250, 400))
+                if event.type == pygame.KEYDOWN:
+                    if event.key == K_RETURN:
+                        lvl += 1
+                        Aliens(lvl)
 
         if derrota == True:
             pygame.mixer.music.fadeout(3000)
             ventana.blit(texto_derrota, (250, 200))
+            ventana.blit(texto_return_d, (250, 400))
             if event.type == pygame.KEYDOWN:
                 if event.key == K_RETURN:
                     lvl = 1
